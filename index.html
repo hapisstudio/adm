@@ -513,32 +513,32 @@
        RESPONSIF MOBILE RAMAH PENGGUNA (TAB DI ATAS)
        ========================================== */
     @media (max-width: 768px) {
-      body:not(.force-desktop) { padding-bottom: 25px !important; }
-      body:not(.force-desktop) .navbar-admin { padding: 10px 14px !important; }
-      body:not(.force-desktop) .navbar-brand { font-size: 1.05rem !important; max-width: 170px; }
-      body:not(.force-desktop) .header-stok { flex-direction: column; align-items: stretch !important; }
-      body:not(.force-desktop) .header-stok .search-wrapper { max-width: 100% !important; }
-      body:not(.force-desktop) .table-responsive { overflow-x: visible !important; }
-      body:not(.force-desktop) .table-items thead { display: none !important; }
-      body:not(.force-desktop) .table-items, body:not(.force-desktop) .table-items tbody { display: block !important; width: 100% !important; border: none !important; }
-      body:not(.force-desktop) .table-items tr.stok-row-anim {
+      body { padding-bottom: 25px !important; }
+      .navbar-admin { padding: 10px 14px !important; }
+      .navbar-brand { font-size: 1.05rem !important; max-width: 170px; }
+      .header-stok { flex-direction: column; align-items: stretch !important; }
+      .header-stok .search-wrapper { max-width: 100% !important; }
+      .table-responsive { overflow-x: visible !important; }
+      .table-items thead { display: none !important; }
+      .table-items, .table-items tbody { display: block !important; width: 100% !important; border: none !important; }
+      .table-items tr.stok-row-anim {
         display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: space-between !important; gap: 6px 8px !important;
         background: #ffffff; border: 2px dashed #fbcfe8 !important; border-radius: 18px !important; padding: 14px !important; margin-bottom: 12px !important;
         box-shadow: 0 4px 12px rgba(244, 114, 182, 0.08) !important;
       }
-      body:not(.force-desktop) .table-items td { border: none !important; padding: 0 !important; }
-      body:not(.force-desktop) .td-no { order: 1; width: auto !important; font-size: 0.8rem; background: #fce7f3; color: #db2777 !important; padding: 2px 8px !important; border-radius: 8px; }
-      body:not(.force-desktop) .td-kode { order: 2; width: auto !important; margin-right: auto !important; margin-left: 6px !important; }
-      body:not(.force-desktop) .td-stok { order: 3; width: auto !important; text-align: right !important; }
-      body:not(.force-desktop) .td-stok .badge { font-size: 0.85rem !important; padding: 5px 12px !important; }
-      body:not(.force-desktop) .td-nama { order: 4; width: 100% !important; font-size: 0.95rem !important; line-height: 1.3 !important; margin-top: 4px !important; margin-bottom: 6px !important; }
-      body:not(.force-desktop) .td-prices {
+      .table-items td { border: none !important; padding: 0 !important; }
+      .td-no { order: 1; width: auto !important; font-size: 0.8rem; background: #fce7f3; color: #db2777 !important; padding: 2px 8px !important; border-radius: 8px; }
+      .td-kode { order: 2; width: auto !important; margin-right: auto !important; margin-left: 6px !important; }
+      .td-stok { order: 3; width: auto !important; text-align: right !important; }
+      .td-stok .badge { font-size: 0.85rem !important; padding: 5px 12px !important; }
+      .td-nama { order: 4; width: 100% !important; font-size: 0.95rem !important; line-height: 1.3 !important; margin-top: 4px !important; margin-bottom: 6px !important; }
+      .td-prices {
         order: 5; width: calc(50% - 4px) !important; display: flex !important; justify-content: space-between !important; align-items: center !important;
         padding: 6px 10px !important; border-radius: 10px !important; font-size: 0.82rem !important; background: #fff1f2; border: 1px solid #fce7f3;
       }
-      body:not(.force-desktop) .stok-mobile-label { display: inline-block !important; font-size: 0.72rem !important; font-weight: 800 !important; color: #94a3b8; }
+      .stok-mobile-label { display: inline-block !important; font-size: 0.72rem !important; font-weight: 800 !important; color: #94a3b8; }
       
-      body:not(.force-desktop) .nav-tabs { 
+      .nav-tabs { 
         position: static !important;
         display: flex !important;
         flex-wrap: nowrap !important;
@@ -550,12 +550,12 @@
         border: none !important;
         background: transparent !important;
       }
-      body:not(.force-desktop) .nav-tabs .nav-link { 
+      .nav-tabs .nav-link { 
         padding: 10px 18px !important; 
         font-size: 0.88rem !important; 
         white-space: nowrap !important; 
       }
-      body:not(.force-desktop) .toast-container { bottom: 20px !important; }
+      .toast-container { bottom: 20px !important; }
       .dashboard-card { padding: 16px; border-radius: 20px; }
       .order-header { flex-direction: column; align-items: flex-start; gap: 12px; }
       .order-header > div:last-child { width: 100%; display: flex; justify-content: space-between; }
@@ -565,22 +565,66 @@
       .btn-status-cute { font-size: 0.95rem; padding: 10px; }
     }
 
-    body.force-desktop { min-width: 1200px !important; overflow-x: auto !important; padding-bottom: 0 !important; }
-    body.force-desktop .container { max-width: 1140px !important; width: 1140px !important; }
-    body.force-desktop .navbar-admin { position: sticky !important; top: 0 !important; width: 100% !important; border-radius: 0 !important; }
-    body.force-desktop .toast-container { bottom: 20px !important; }
-    body.force-desktop .nav-tabs { position: static !important; background: transparent !important; box-shadow: none !important; border: none !important; flex-wrap: wrap !important; overflow-x: visible !important; justify-content: center !important; padding: 0 !important; }
-    body.force-desktop .nav-tabs .nav-link { display: inline-block !important; padding: 12px 25px !important; font-size: 1rem !important; }
-    body.force-desktop .order-header { flex-direction: row !important; align-items: center !important; }
-    body.force-desktop .order-header > div:last-child { width: auto !important; }
-    body.force-desktop .search-wrapper { max-width: 350px !important; margin-top: 0 !important; }
-    body.force-desktop .table-responsive { overflow-x: auto !important; }
-    body.force-desktop .table-items { display: table !important; font-size: 0.95rem !important; }
-    body.force-desktop .table-items thead { display: table-header-group !important; }
-    body.force-desktop .table-items tbody { display: table-row-group !important; }
-    body.force-desktop .table-items tr.stok-row-anim { display: table-row !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; border: none !important; }
-    body.force-desktop .table-items td { display: table-cell !important; padding: 12px !important; border-bottom: 1px dashed #fbcfe8 !important; background: transparent !important; width: auto !important; }
-    body.force-desktop .stok-mobile-label { display: none !important; }
+    /* ==========================================
+       MODE PAKSA MOBILE (KETIKA MODE HP DIAKTIFKAN)
+       ========================================== */
+    body.force-mobile { padding-bottom: 25px !important; }
+    body.force-mobile .container { max-width: 480px !important; margin: 0 auto !important; }
+    body.force-mobile .navbar-admin { padding: 10px 14px !important; }
+    body.force-mobile .navbar-brand { font-size: 1.05rem !important; max-width: 170px; }
+    body.force-mobile .header-stok { flex-direction: column !important; align-items: stretch !important; }
+    body.force-mobile .header-stok .search-wrapper { max-width: 100% !important; }
+    body.force-mobile .table-responsive { overflow-x: visible !important; }
+    body.force-mobile .table-items thead { display: none !important; }
+    body.force-mobile .table-items, body.force-mobile .table-items tbody { display: block !important; width: 100% !important; border: none !important; }
+    body.force-mobile .table-items tr.stok-row-anim {
+      display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: space-between !important; gap: 6px 8px !important;
+      background: #ffffff; border: 2px dashed #fbcfe8 !important; border-radius: 18px !important; padding: 14px !important; margin-bottom: 12px !important;
+      box-shadow: 0 4px 12px rgba(244, 114, 182, 0.08) !important;
+    }
+    body.force-mobile.theme-glass .table-items tr.stok-row-anim {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    body.force-mobile.theme-pixel .table-items tr.stok-row-anim {
+      background: #30346d !important;
+      border: 3px solid #1a1c2c !important;
+      border-radius: 0 !important;
+      box-shadow: 4px 4px 0 #1a1c2c !important;
+    }
+    body.force-mobile .table-items td { border: none !important; padding: 0 !important; }
+    body.force-mobile .td-no { order: 1; width: auto !important; font-size: 0.8rem; background: #fce7f3; color: #db2777 !important; padding: 2px 8px !important; border-radius: 8px; }
+    body.force-mobile .td-kode { order: 2; width: auto !important; margin-right: auto !important; margin-left: 6px !important; }
+    body.force-mobile .td-stok { order: 3; width: auto !important; text-align: right !important; }
+    body.force-mobile .td-stok .badge { font-size: 0.85rem !important; padding: 5px 12px !important; }
+    body.force-mobile .td-nama { order: 4; width: 100% !important; font-size: 0.95rem !important; line-height: 1.3 !important; margin-top: 4px !important; margin-bottom: 6px !important; }
+    body.force-mobile .td-prices {
+      order: 5; width: calc(50% - 4px) !important; display: flex !important; justify-content: space-between !important; align-items: center !important;
+      padding: 6px 10px !important; border-radius: 10px !important; font-size: 0.82rem !important; background: #fff1f2; border: 1px solid #fce7f3;
+    }
+    body.force-mobile .stok-mobile-label { display: inline-block !important; font-size: 0.72rem !important; font-weight: 800 !important; color: #94a3b8; }
+    body.force-mobile .nav-tabs { 
+      position: static !important;
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      justify-content: flex-start !important;
+      padding: 4px 4px 10px !important;
+      gap: 8px !important;
+      background: transparent !important;
+    }
+    body.force-mobile .nav-tabs .nav-link { 
+      padding: 10px 18px !important; 
+      font-size: 0.88rem !important; 
+      white-space: nowrap !important; 
+    }
+    body.force-mobile .dashboard-card { padding: 16px; border-radius: 20px; }
+    body.force-mobile .order-header { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+    body.force-mobile .order-header > div:last-child { width: 100% !important; display: flex !important; justify-content: space-between !important; }
+    body.force-mobile .search-wrapper { max-width: 100% !important; margin-top: 10px !important; }
+    body.force-mobile .table-items { font-size: 0.85rem !important; }
+    body.force-mobile .table-items th, body.force-mobile .table-items td { padding: 8px !important; }
+    body.force-mobile .btn-status-cute { font-size: 0.95rem !important; padding: 10px !important; }
   </style>
 </head>
 <body>
@@ -603,7 +647,7 @@
       <button class="btn btn-sm btn-nav-custom animate-nav" id="btnEngineModal" onclick="openDbConfigModal()" title="Pengaturan Engine Database">
         <i class="bi bi-cpu-fill"></i> <span id="navEngineBadge" class="d-none d-sm-inline">Engine: Sheets</span>
       </button>
-      <button class="btn btn-sm btn-nav-custom animate-nav" id="btnViewMode" onclick="cycleViewMode()" title="Ganti Mode Tampilan">
+      <button class="btn btn-sm btn-nav-custom animate-nav" id="btnViewMode" onclick="cycleViewMode()" title="Ganti Mode Tampilan (Auto / Mobile)">
         <i id="viewModeIcon" class="bi bi-aspect-ratio"></i> <span id="viewModeText" class="d-none d-sm-inline">Auto</span>
       </button>
       <button class="btn btn-sm btn-nav-custom animate-nav" onclick="openThemeModal()" title="Pilih Tema UI">
@@ -1168,6 +1212,242 @@
       }
     }
 
+    /* =========================================================================
+       MODUL FITUR CACHE: PWA WORKER, OUTBOX, FRESHNESS, SEARCH HISTORY & CLEANUP
+       ========================================================================= */
+    function registerPwaCacheWorker() {
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        try {
+          const swCode = `
+            const CACHE_NAME = 'gudang-cache-v1';
+            self.addEventListener('install', (e) => { self.skipWaiting(); });
+            self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
+          `;
+          const blob = new Blob([swCode], { type: 'application/javascript' });
+          const swUrl = URL.createObjectURL(blob);
+          navigator.serviceWorker.register(swUrl).catch((err) => {
+            console.debug('ServiceWorker disabled in iframe/sandbox environment:', err);
+          });
+        } catch (e) {
+          console.debug('ServiceWorker setup skipped:', e);
+        }
+      }
+    }
+
+    // --- Outbox Queue (Offline Action Pattern) ---
+    let offlineActionQueue = safeStorageGet('offline_action_queue', []);
+
+    function enqueueOfflineAction(payload) {
+      offlineActionQueue.push({ id: Date.now(), payload: payload });
+      safeStorageSet('offline_action_queue', offlineActionQueue);
+      updateOutboxUI();
+    }
+
+    function updateOutboxUI() {
+      const bar = document.getElementById('outboxBar');
+      const txt = document.getElementById('outboxCountText');
+      if (!bar || !txt) return;
+      if (offlineActionQueue.length > 0) {
+        bar.style.display = 'flex';
+        txt.innerText = `${offlineActionQueue.length} perubahan status menunggu sinyal pulih...`;
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
+    async function processOfflineQueue(manual = false) {
+      if (!navigator.onLine || offlineActionQueue.length === 0) {
+        if (manual) showNotification("Info Antrean", "Tidak ada antrean tertunda atau sinyal belum tersedia.");
+        return;
+      }
+      const queueCopy = [...offlineActionQueue];
+      let successCount = 0;
+      for (const item of queueCopy) {
+        try {
+          const res = await fetchAPI('updateStatusPesanan', item.payload);
+          if (res && res.success) {
+            offlineActionQueue = offlineActionQueue.filter(q => q.id !== item.id);
+            safeStorageSet('offline_action_queue', offlineActionQueue);
+            successCount++;
+          }
+        } catch (e) {
+          console.warn("Gagal sinkronisasi antrean offline:", e);
+          break;
+        }
+      }
+      updateOutboxUI();
+      if (successCount > 0) {
+        showNotification("Sinkronisasi Selesai", `${successCount} perubahan status offline berhasil terkirim ke server!`);
+        loadAdminData(false);
+      }
+    }
+
+    window.addEventListener('online', () => {
+      showNotification("Sinyal Pulih", "Koneksi internet kembali normal. Memproses antrean offline...");
+      processOfflineQueue();
+    });
+    window.addEventListener('offline', () => {
+      showNotification("Mode Offline", "Koneksi internet terputus. Perubahan status akan disimpan ke antrean lokal.");
+    });
+
+    // --- Riwayat Pencarian Cepat (Chip History) ---
+    let orderSearchHistory = safeStorageGet('history_order_search', []);
+    let stokSearchHistory = safeStorageGet('history_stok_search', []);
+
+    function renderSearchHistory(type) {
+      const container = document.getElementById(type === 'order' ? 'orderSearchHistory' : 'stokSearchHistory');
+      if (!container) return;
+      const list = type === 'order' ? orderSearchHistory : stokSearchHistory;
+      if (!list || list.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = list.map((item, idx) => `
+        <span class="history-pill" onclick="applySearchHistory('${type}', '${item.replace(/'/g, "\\'")}')">
+          <i class="bi bi-clock-history"></i> ${item}
+          <span class="history-pill-remove" onclick="removeSearchHistory(event, '${type}', ${idx})">&times;</span>
+        </span>
+      `).join('');
+    }
+
+    function addSearchHistory(type, keyword) {
+      const clean = (keyword || '').trim();
+      if (!clean || clean.length < 2) return;
+      let list = type === 'order' ? orderSearchHistory : stokSearchHistory;
+      list = list.filter(k => k.toLowerCase() !== clean.toLowerCase());
+      list.unshift(clean);
+      if (list.length > 6) list = list.slice(0, 6);
+      if (type === 'order') {
+        orderSearchHistory = list;
+        safeStorageSet('history_order_search', list);
+      } else {
+        stokSearchHistory = list;
+        safeStorageSet('history_stok_search', list);
+      }
+      renderSearchHistory(type);
+    }
+
+    function removeSearchHistory(e, type, idx) {
+      e.stopPropagation();
+      let list = type === 'order' ? orderSearchHistory : stokSearchHistory;
+      list.splice(idx, 1);
+      if (type === 'order') {
+        orderSearchHistory = list;
+        safeStorageSet('history_order_search', list);
+      } else {
+        stokSearchHistory = list;
+        safeStorageSet('history_stok_search', list);
+      }
+      renderSearchHistory(type);
+    }
+
+    function applySearchHistory(type, keyword) {
+      if (type === 'order') {
+        const input = document.getElementById('searchOrder');
+        if (input) {
+          input.value = keyword;
+          filterOrder();
+        }
+      } else {
+        const input = document.getElementById('searchStok');
+        if (input) {
+          input.value = keyword;
+          filterStok();
+        }
+      }
+    }
+
+    let debouncedHistoryOrder;
+    function handleOrderInput(val) {
+      filterOrder();
+      clearTimeout(debouncedHistoryOrder);
+      debouncedHistoryOrder = setTimeout(() => {
+        if (val && val.trim().length >= 3) addSearchHistory('order', val.trim());
+      }, 1000);
+    }
+
+    let debouncedHistoryStok;
+    function handleStokInput(val) {
+      filterStok();
+      clearTimeout(debouncedHistoryStok);
+      debouncedHistoryStok = setTimeout(() => {
+        if (val && val.trim().length >= 3) addSearchHistory('stok', val.trim());
+      }, 1000);
+    }
+
+    // --- Umur Data / Freshness Indicator ---
+    function recordCacheTimestamp(type) {
+      const now = Date.now();
+      safeStorageSet(`cache_time_${type}`, now);
+      updateFreshnessBadges();
+    }
+
+    function getRelativeTime(timestamp) {
+      if (!timestamp) return 'Belum pernah disinkronkan';
+      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+      if (diffSec < 15) return 'Baru saja';
+      if (diffSec < 60) return `${diffSec} detik lalu`;
+      const diffMin = Math.floor(diffSec / 60);
+      if (diffMin < 60) return `${diffMin} menit lalu`;
+      const diffHours = Math.floor(diffMin / 60);
+      if (diffHours < 24) return `${diffHours} jam lalu`;
+      return `${Math.floor(diffHours / 24)} hari lalu`;
+    }
+
+    function updateFreshnessBadges() {
+      const orderTime = safeStorageGet('cache_time_order', null);
+      const stokTime = safeStorageGet('cache_time_stok', null);
+
+      const orderText = document.getElementById('orderFreshnessText');
+      const stokText = document.getElementById('stokFreshnessText');
+
+      if (orderText) {
+        orderText.innerHTML = orderTime ? `Disinkron: <b>${getRelativeTime(orderTime)}</b>` : 'Klik untuk sinkron';
+      }
+      if (stokText) {
+        stokText.innerHTML = stokTime ? `Disinkron: <b>${getRelativeTime(stokTime)}</b>` : 'Klik untuk sinkron';
+      }
+    }
+    setInterval(updateFreshnessBadges, 30000);
+
+    // --- Pembersihan Cache Manual ---
+    async function clearAppCache() {
+      try {
+        localStorage.removeItem('cached_stok');
+        localStorage.removeItem('cached_orders');
+        localStorage.removeItem('cached_setup');
+        localStorage.removeItem('history_order_search');
+        localStorage.removeItem('history_stok_search');
+        localStorage.removeItem('cache_time_order');
+        localStorage.removeItem('cache_time_stok');
+        localStorage.removeItem('offline_action_queue');
+
+        try {
+          const db = await openIndexedDB();
+          const tx = db.transaction(IDB_CONFIG.storeName, 'readwrite');
+          tx.objectStore(IDB_CONFIG.storeName).clear();
+        } catch (e) {}
+
+        globalStok = [];
+        globalOrders = [];
+        offlineActionQueue = [];
+        orderSearchHistory = [];
+        stokSearchHistory = [];
+
+        filterStok();
+        renderOrders();
+        updateOutboxUI();
+        renderSearchHistory('stok');
+        renderSearchHistory('order');
+        updateFreshnessBadges();
+
+        showNotification("Cache Bersih", "Semua data cache lokal dan riwayat pencarian telah dihapus.");
+        loadAdminData(true);
+      } catch (err) {
+        showNotification("Error", "Gagal membersihkan cache: " + err.message);
+      }
+    }
+
     let appConfig = safeStorageGet('appHybridConfig', DEFAULT_CONFIG);
     if (!appConfig.engines) appConfig.engines = { ...DEFAULT_CONFIG.engines };
 
@@ -1205,268 +1485,7 @@
     let flashCheckInterval = null;
 
     let currentViewMode = safeStorageGet('adminViewMode', 'auto');
-
-    /* =========================================================================
-       ARSITEKTUR CACHE 1: TIMESTAMP & FRESHNESS INDICATOR
-       ========================================================================= */
-    function recordCacheTimestamp(type) {
-      const now = Date.now();
-      safeStorageSet(`cache_ts_${type}`, now);
-      updateFreshnessBadges();
-    }
-
-    function getRelativeTimeString(timestamp) {
-      if (!timestamp) return 'Belum pernah disinkronkan';
-      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
-      if (diffSec < 45) return '🟢 Disinkronkan barusan';
-      if (diffSec < 120) return '🟢 Disinkronkan 1 mnt lalu';
-      const mins = Math.floor(diffSec / 60);
-      if (mins < 60) return `🟡 Data ${mins} mnt lalu (Klik sync)`;
-      const hours = Math.floor(mins / 60);
-      return `🔴 Data ${hours} jam lalu (Klik sync)`;
-    }
-
-    function updateFreshnessBadges() {
-      const stokTs = safeStorageGet('cache_ts_stok', null);
-      const orderTs = safeStorageGet('cache_ts_order', null);
-
-      const stokTextEl = document.getElementById('stokFreshnessText');
-      const orderTextEl = document.getElementById('orderFreshnessText');
-
-      if (stokTextEl) stokTextEl.innerText = getRelativeTimeString(stokTs);
-      if (orderTextEl) orderTextEl.innerText = getRelativeTimeString(orderTs);
-    }
-    setInterval(updateFreshnessBadges, 30000);
-
-    /* =========================================================================
-       ARSITEKTUR CACHE 2: OFFLINE ACTION QUEUE / OUTBOX CACHE
-       ========================================================================= */
-    let offlineActionQueue = safeStorageGet('offline_pending_actions', []);
-
-    function updateOutboxUI() {
-      const bar = document.getElementById('outboxBar');
-      const countEl = document.getElementById('outboxCountText');
-      if (!bar) return;
-
-      if (offlineActionQueue.length > 0) {
-        bar.style.display = 'flex';
-        countEl.innerText = `⚠️ ${offlineActionQueue.length} aksi update status menunggu sinyal pulih...`;
-      } else {
-        bar.style.display = 'none';
-      }
-    }
-
-    function enqueueOfflineAction(actionPayload) {
-      offlineActionQueue.push({
-        id: Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-        payload: actionPayload,
-        timestamp: Date.now()
-      });
-      safeStorageSet('offline_pending_actions', offlineActionQueue);
-      updateOutboxUI();
-    }
-
-    let isProcessingQueue = false;
-    async function processOfflineQueue(manualTrigger = false) {
-      if (isProcessingQueue || offlineActionQueue.length === 0) return;
-      if (!navigator.onLine && !manualTrigger) return;
-
-      isProcessingQueue = true;
-      setSyncIndicator(true);
-
-      const remainingQueue = [];
-      let successCount = 0;
-
-      for (const item of offlineActionQueue) {
-        try {
-          const res = await fetchAPI('updateStatusPesanan', item.payload);
-          if (res && res.success) {
-            successCount++;
-          } else {
-            remainingQueue.push(item);
-          }
-        } catch (e) {
-          remainingQueue.push(item);
-          break; // Putus jika masih offline
-        }
-      }
-
-      offlineActionQueue = remainingQueue;
-      safeStorageSet('offline_pending_actions', offlineActionQueue);
-      updateOutboxUI();
-      setSyncIndicator(false);
-      isProcessingQueue = false;
-
-      if (successCount > 0) {
-        showNotification("Antrean Sinkron", `Berhasil mengirim ${successCount} aksi update status yang tertunda! ✨`);
-        loadAdminData(false);
-      }
-    }
-
-    window.addEventListener('online', () => {
-      showNotification("Sinyal Pulih", "Koneksi internet terhubung kembali. Memproses antrean...");
-      processOfflineQueue();
-      loadAdminData(false);
-    });
-
-    window.addEventListener('offline', () => {
-      showNotification("Mode Offline", "Sinyal hilang. Perubahan status akan disimpan ke antrean lokal.");
-    });
-
-    /* =========================================================================
-       ARSITEKTUR CACHE 4: SEARCH & BARCODE SCAN HISTORY CACHE
-       ========================================================================= */
-    const MAX_HISTORY = 6;
-
-    function getSearchHistory(type) {
-      return safeStorageGet(`search_history_${type}`, []);
-    }
-
-    function addSearchHistory(type, keyword) {
-      if (!keyword || !keyword.trim()) return;
-      const clean = keyword.trim();
-      let list = getSearchHistory(type).filter(k => k.toLowerCase() !== clean.toLowerCase());
-      list.unshift(clean);
-      if (list.length > MAX_HISTORY) list = list.slice(0, MAX_HISTORY);
-      safeStorageSet(`search_history_${type}`, list);
-      renderSearchHistory(type);
-    }
-
-    function removeSearchHistory(type, keyword, event) {
-      if (event) event.stopPropagation();
-      let list = getSearchHistory(type).filter(k => k.toLowerCase() !== keyword.toLowerCase());
-      safeStorageSet(`search_history_${type}`, list);
-      renderSearchHistory(type);
-    }
-
-    function applyHistorySearch(type, keyword) {
-      if (type === 'stok') {
-        document.getElementById('searchStok').value = keyword;
-        filterStok();
-      } else {
-        document.getElementById('searchOrder').value = keyword;
-        filterOrder();
-      }
-    }
-
-    function renderSearchHistory(type) {
-      const containerId = type === 'stok' ? 'stokSearchHistory' : 'orderSearchHistory';
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      const list = getSearchHistory(type);
-      if (!list || list.length === 0) {
-        container.innerHTML = '';
-        return;
-      }
-
-      container.innerHTML = list.map(item => `
-        <span class="history-pill" onclick="applyHistorySearch('${type}', '${item.replace(/'/g, "\\'")}')">
-          <i class="bi bi-clock-history"></i> ${item}
-          <span class="history-pill-remove" onclick="removeSearchHistory('${type}', '${item.replace(/'/g, "\\'")}', event)">×</span>
-        </span>
-      `).join('');
-    }
-
-    function handleStokInput(val) {
-      filterStok();
-      if (val && val.trim().length >= 3) {
-        debounceAddHistory('stok', val.trim());
-      }
-    }
-
-    function handleOrderInput(val) {
-      filterOrder();
-      if (val && val.trim().length >= 3) {
-        debounceAddHistory('order', val.trim());
-      }
-    }
-
-    let historyTimers = {};
-    function debounceAddHistory(type, text) {
-      clearTimeout(historyTimers[type]);
-      historyTimers[type] = setTimeout(() => {
-        addSearchHistory(type, text);
-      }, 1000);
-    }
-
-    /* =========================================================================
-       ARSITEKTUR CACHE 5: PWA SERVICE WORKER ASSET CACHE (BLOB BASED)
-       ========================================================================= */
-    function registerPwaCacheWorker() {
-      if ('serviceWorker' in navigator) {
-        const swCode = `
-          const CACHE_NAME = 'gudang-cache-v1';
-          const ASSETS_TO_CACHE = [
-            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-            'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css',
-            'https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js',
-            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
-            'https://unpkg.com/html5-qrcode'
-          ];
-
-          self.addEventListener('install', (e) => {
-            e.waitUntil(
-              caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)).catch(() => {})
-            );
-            self.skipWaiting();
-          });
-
-          self.addEventListener('activate', (e) => {
-            e.waitUntil(
-              caches.keys().then((keys) => Promise.all(
-                keys.map((k) => { if (k !== CACHE_NAME) return caches.delete(k); })
-              ))
-            );
-            self.clients.claim();
-          });
-
-          self.addEventListener('fetch', (e) => {
-            if (e.request.method !== 'GET') return;
-            e.respondWith(
-              caches.match(e.request).then((cached) => {
-                return cached || fetch(e.request).then((resp) => {
-                  if (resp.status === 200 && e.request.url.includes('cdn')) {
-                    const respClone = resp.clone();
-                    caches.open(CACHE_NAME).then((c) => c.put(e.request, respClone));
-                  }
-                  return resp;
-                }).catch(() => cached);
-              })
-            );
-          });
-        `;
-        try {
-          const blob = new Blob([swCode], { type: 'application/javascript' });
-          const swUrl = URL.createObjectURL(blob);
-          navigator.serviceWorker.register(swUrl).catch((err) => {
-            console.log("Catatan registrasi SW:", err.message);
-          });
-        } catch (e) {
-          console.warn("ServiceWorker blob didukung terbatas:", e);
-        }
-      }
-    }
-
-    function clearAppCache() {
-      if (confirm("Bersihkan seluruh data tersimpan (cache stok, pesanan, dan antrean)?")) {
-        localStorage.removeItem('cached_stok');
-        localStorage.removeItem('cached_orders');
-        localStorage.removeItem('cached_setup');
-        localStorage.removeItem('offline_pending_actions');
-        localStorage.removeItem('search_history_stok');
-        localStorage.removeItem('search_history_order');
-        localStorage.removeItem('cache_ts_stok');
-        localStorage.removeItem('cache_ts_order');
-        
-        try {
-          if (window.indexedDB) indexedDB.deleteDatabase(IDB_CONFIG.dbName);
-        } catch(e){}
-
-        showNotification("Cache Bersih", "Seluruh data lokal telah dibersihkan. Memuat ulang data baru...");
-        setTimeout(() => location.reload(), 800);
-      }
-    }
+    if (currentViewMode === 'desktop') currentViewMode = 'auto'; // migrasi dari mode desktop sebelumnya
 
     function applyViewMode(mode) {
       currentViewMode = mode;
@@ -1477,13 +1496,13 @@
       const icon = document.getElementById('viewModeIcon');
       const text = document.getElementById('viewModeText');
 
-      body.classList.remove('force-desktop');
+      body.classList.remove('force-mobile');
 
-      if (mode === 'desktop') {
-        body.classList.add('force-desktop');
-        if (meta) meta.setAttribute('content', 'width=1200, initial-scale=0.35, user-scalable=yes');
-        if (icon) icon.className = 'bi bi-display';
-        if (text) text.innerText = 'Desktop';
+      if (mode === 'mobile') {
+        body.classList.add('force-mobile');
+        if (meta) meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        if (icon) icon.className = 'bi bi-phone-fill';
+        if (text) text.innerText = 'Mobile';
       } else {
         if (meta) meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
         if (icon) icon.className = 'bi bi-aspect-ratio';
@@ -1493,11 +1512,11 @@
 
     function cycleViewMode() {
       if (currentViewMode === 'auto') {
-        applyViewMode('desktop');
-        showNotification("Mode Tampilan", "Beralih ke tampilan Desktop 🖥️");
+        applyViewMode('mobile');
+        showNotification("Mode Tampilan", "Beralih ke tampilan Mobile (Kartu HP) 📱");
       } else {
         applyViewMode('auto');
-        showNotification("Mode Tampilan", "Beralih ke tampilan Auto (Responsif) 📱");
+        showNotification("Mode Tampilan", "Beralih ke tampilan Auto (Responsif) 🔄");
       }
     }
     applyViewMode(currentViewMode);
