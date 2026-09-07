@@ -443,6 +443,25 @@
             </button>
           </div>
         </div>
+
+        <!-- Notification Preferences -->
+        <div class="bg-ios-card rounded-2xl border border-ios-separator/60 p-4 sm:p-5 flex flex-col gap-3 shadow-ios-card dark:shadow-ios-card-dark">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-ios-blue text-[20px]">notifications</span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ios-text">Pemberitahuan</h3>
+          </div>
+          <p class="text-[11px] text-ios-text-ter">Toast otomatis saat ada pesanan baru &amp; stok menipis (&le;20). Badge merah di tab Stok mencatat total SKU perlu restok.</p>
+          <label class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-ios-card-sub border border-ios-separator/50 cursor-pointer select-none" for="toggleNotifMute">
+            <span class="flex flex-col">
+              <span class="text-xs font-bold text-ios-text">Aktifkan Notifikasi</span>
+              <span class="text-[10px] text-ios-text-ter">Matikan jika terlalu berisik</span>
+            </span>
+            <div class="relative inline-flex items-center shrink-0">
+              <input id="toggleNotifMute" onchange="window.WarehouseApp.toggleNotifMute(this.checked)" class="sr-only peer" type="checkbox" checked />
+              <div class="w-9 h-5 bg-ios-separator rounded-full peer peer-checked:bg-ios-green peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all relative"></div>
+            </div>
+          </label>
+        </div>
       </section>
     </main>
 
@@ -453,8 +472,11 @@
           <span class="material-symbols-outlined text-[22px]">view_list</span>
           <span class="text-[10px] font-bold">Pesanan</span>
         </button>
-        <button onclick="window.WarehouseApp.switchMainTab('stok')" id="tabNavStok" class="nav-dock-btn flex flex-col items-center justify-center gap-0.5 text-ios-text-ter hover:text-ios-text ios-press" type="button">
-          <span class="material-symbols-outlined text-[22px]">inventory_2</span>
+        <button onclick="window.WarehouseApp.switchMainTab('stok')" id="tabNavStok" class="nav-dock-btn relative flex flex-col items-center justify-center gap-0.5 text-ios-text-ter hover:text-ios-text ios-press" type="button">
+          <span class="relative inline-flex">
+            <span class="material-symbols-outlined text-[22px]">inventory_2</span>
+            <span id="tabStokBadge" class="hidden absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-ios-orange text-white text-[9px] font-extrabold leading-4 text-center ios-press">0</span>
+          </span>
           <span class="text-[10px] font-bold">Stok</span>
         </button>
         <button onclick="window.WarehouseApp.switchMainTab('setting')" id="tabNavSetting" class="nav-dock-btn flex flex-col items-center justify-center gap-0.5 text-ios-text-ter hover:text-ios-text ios-press" type="button">
@@ -746,6 +768,11 @@
       let pendingBatchPages = [];
       let offlineActionQueue = safeStorageGet('offline_action_queue', []);
       let currentStokStatusFilter = 'all';
+
+      // --- Notification engine state (snapshot of last seen data) ---
+      let lastSeenOrderIds = new Set();
+      let lastSeenLowStock = new Set();   // SKU ids that were already flagged low/empty
+      let notifMuted = safeStorageGet('warehouse_notif_muted', false);
 
       /* Smooth & Purposeful Motion Controller (GSAP 3) */
       const Motion = {
@@ -1113,7 +1140,7 @@
         window.scrollTo(0, 0);
       }
 
-      async function loadAdminData(showSpinner = false) {
+      async function loadAdminData(showSpinner = false, announce = false) {
         setSyncIndicator(true);
         try {
           const res = await fetchAPI('getAdminData');
@@ -1128,6 +1155,7 @@
             recordFreshness();
             renderOrders();
             filterStok(true);
+            runNotificationScan({ quiet: !announce });
             if (showSpinner) showToast("Tersinkron", "Data pesanan dan stok diperbarui.");
           } else {
             throw new Error((res && res.message) || "Gagal memuat data dari Spreadsheet.");
@@ -1150,6 +1178,97 @@
         const stokStamp = document.getElementById('stokFreshnessStamp');
         if (stamp) stamp.innerText = `${timeStr} WIB`;
         if (stokStamp) stokStamp.innerText = `Sinkron ${timeStr}`;
+      }
+
+      // --- Notification Engine (stok menipis & pesanan baru) ---
+      // A SKU is "low" when qty <= 20 (matches Restok/Habis thresholds used elsewhere).
+      function getLowStockIds() {
+        const ids = new Set();
+        (globalStok || []).forEach(it => {
+          if ((Number(it.stok) || 0) <= 20) ids.add(String(it.id).trim());
+        });
+        return ids;
+      }
+
+      function updateStokBadge() {
+        const badge = document.getElementById('tabStokBadge');
+        if (!badge) return;
+        const low = getLowStockIds();
+        const count = low.size;
+        if (count > 0) {
+          badge.innerText = count > 99 ? '99+' : String(count);
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
+      function loadNotificationSnapshot() {
+        const o = safeStorageGet('warehouse_seen_orders', null);
+        const s = safeStorageGet('warehouse_seen_lowstock', null);
+        if (Array.isArray(o)) lastSeenOrderIds = new Set(o);
+        if (Array.isArray(s)) lastSeenLowStock = new Set(s);
+      }
+
+      function persistNotificationSnapshot() {
+        safeStorageSet('warehouse_seen_orders', [...lastSeenOrderIds]);
+        safeStorageSet('warehouse_seen_lowstock', [...lastSeenLowStock]);
+      }
+
+      function runNotificationScan(opts = {}) {
+        if (notifMuted) { updateStokBadge(); return; }
+        const quiet = opts.quiet !== false; // suppress toasts on very first load
+
+        // --- Pesanan baru ---
+        const currentOrderIds = new Set((globalOrders || []).map(o => String(o.idPesanan).trim()).filter(Boolean));
+        if (quiet) {
+          const freshOrderIds = [...currentOrderIds].filter(id => !lastSeenOrderIds.has(id));
+          if (freshOrderIds.length > 0) {
+            const n = freshOrderIds.length;
+            const sample = (globalOrders.find(o => String(o.idPesanan).trim() === freshOrderIds[0]) || {});
+            const title = n === 1 ? `Pesanan Baru ${sample.idPesanan || ''}` : `${n} Pesanan Baru Masuk`;
+            const msg = n === 1 ? `Toko: ${sample.namaToko || '-'}` : `Ada ${n} pesanan menunggu di antrean.`;
+            showToast(title, msg);
+          }
+        }
+        lastSeenOrderIds = currentOrderIds;
+
+        // --- Stok menipis (baru masuk kategori low) ---
+        const currentLow = getLowStockIds();
+        if (quiet) {
+          const newlyLow = [...currentLow].filter(id => !lastSeenLowStock.has(id));
+          if (newlyLow.length > 0) {
+            const names = newlyLow.slice(0, 3).map(id => {
+              const it = (globalStok || []).find(x => String(x.id).trim() === id);
+              return it ? (it.nama || it.id) : id;
+            });
+            const extra = newlyLow.length - names.length;
+            const tail = extra > 0 ? ` +${extra} lainnya` : '';
+            const title = newlyLow.length === 1 ? 'Stok Menipis' : `${newlyLow.length} Stok Menipis`;
+            const msg = names.join(', ') + tail;
+            showToast(title, msg, false);
+          }
+        }
+        lastSeenLowStock = currentLow;
+
+        persistNotificationSnapshot();
+        updateStokBadge();
+      }
+
+      function setNotifMuted(muted) {
+        notifMuted = muted;
+        safeStorageSet('warehouse_notif_muted', muted);
+        if (muted) showToast('Notifikasi Dimatikan', 'Toast stok & pesanan baru nonaktif.');
+        else { showToast('Notifikasi Aktif', 'Anda akan dapat peringatan stok & pesanan baru.'); }
+      }
+
+      function toggleNotifMute(isChecked) {
+        setNotifMuted(!isChecked);
+      }
+
+      function syncNotifToggleUI() {
+        const cb = document.getElementById('toggleNotifMute');
+        if (cb) cb.checked = !notifMuted;
       }
 
       function setOrderFilter(filterName) {
@@ -2422,6 +2541,9 @@
         localStorage.removeItem('cached_stok');
         localStorage.removeItem('cached_orders');
         localStorage.removeItem('offline_action_queue');
+        localStorage.removeItem('warehouse_seen_orders');
+        localStorage.removeItem('warehouse_seen_lowstock');
+        localStorage.removeItem('warehouse_notif_muted');
 
         try {
           const db = await openIndexedDB();
@@ -2432,8 +2554,13 @@
         globalOrders = [];
         globalStok = [];
         offlineActionQueue = [];
+        lastSeenOrderIds = new Set();
+        lastSeenLowStock = new Set();
+        notifMuted = false;
+        syncNotifToggleUI();
         renderOrders();
         filterStok(true);
+        updateStokBadge();
         updateOutboxUI();
         showToast("Cache Bersih", "Memori lokal telah dikosongkan.");
       }
@@ -2521,6 +2648,9 @@
         saveSheetConfig,
         verifyAndSaveSuperAdmin,
         clearAppCache,
+        toggleNotifMute,
+        syncNotifToggleUI,
+        updateStokBadge,
         processOfflineQueue,
         loadAdminData,
         openModal,
@@ -2531,6 +2661,8 @@
         initTheme();
         updateSessionUI();
         updateOutboxUI();
+        loadNotificationSnapshot();
+        syncNotifToggleUI();
 
         const idbO = await idbGet('cached_orders', null);
         const idbS = await idbGet('cached_stok', null);
@@ -2538,17 +2670,18 @@
         if (idbS) globalStok = idbS;
 
         if (globalOrders.length > 0) renderOrders();
-        if (globalStok.length > 0) filterStok(true);
+        if (globalStok.length > 0) { filterStok(true); updateStokBadge(); }
 
         if (!currentUser) {
           openModal('modalLoginAwal');
         } else {
-          loadAdminData(false);
+          // First load = silent baseline (no toast for pre-existing data)
+          loadAdminData(false, false);
         }
 
         setInterval(() => {
           if (navigator.onLine && currentUser && !activePickingOrder) {
-            loadAdminData(false);
+            loadAdminData(false, true); // polling announces diffs as toasts
           }
         }, 30000);
       };
