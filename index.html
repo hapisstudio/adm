@@ -69,6 +69,21 @@
       accent-color: #ee4d2d;
     }
 
+    /* Mobile Container Frame Style */
+    .mobile-frame-mode {
+      max-width: 480px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .desktop-frame-mode {
+      max-width: 80rem !important; /* 7xl */
+      margin-left: auto !important;
+      margin-right: auto !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     @media print {
       @page {
         size: 80mm auto;
@@ -94,449 +109,468 @@
 
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col antialiased selection:bg-orange-500 selection:text-white pb-12">
 
-  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25 shrink-0">
-          <i data-lucide="printer" class="w-5 h-5 text-white"></i>
+  <!-- Header with Brand, Connection Badge, View Switcher & Action Buttons -->
+  <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-3 sm:px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      
+      <!-- Brand Logo & Title -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25 shrink-0">
+          <i data-lucide="printer" class="w-4 h-4 text-white"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base font-bold tracking-tight text-white leading-tight">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm font-bold tracking-tight text-white leading-tight">
               MiniPOS <span class="text-orange-500 font-extrabold">MP-80UBX</span>
             </h1>
-            <span class="text-[10px] font-bold uppercase tracking-wider bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full border border-orange-500/30">
-              Fix Edition
+            <span class="text-[9px] font-bold uppercase tracking-wider bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded-full border border-orange-500/30">
+              Pro
             </span>
           </div>
-          <p class="text-xs text-slate-400 hidden sm:block">Thermal 80mm (576 Dots) • Web Bluetooth / Serial / RawBT</p>
+          <p class="text-[10px] text-slate-400 hidden sm:block">Thermal 80mm (576 Dots) • Web Bluetooth / Serial / RawBT</p>
         </div>
       </div>
 
-      <!-- Connection Status & Button -->
+      <!-- Controls: View Switcher (Mobile/Desktop) + Connect Button -->
       <div class="flex items-center gap-2">
-        <div id="deviceBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-400">
+        
+        <!-- View Mode Switcher Button (Mobile by Default) -->
+        <button id="viewSwitchBtn" onclick="toggleViewMode()" title="Ganti Mode Tampilan (Mobile / Desktop)" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 border border-slate-700 text-xs font-medium flex items-center gap-1.5 shadow-sm transition">
+          <i id="viewSwitchIcon" data-lucide="smartphone" class="w-3.5 h-3.5 text-orange-400"></i>
+          <span id="viewSwitchText" class="text-[11px] font-semibold text-slate-200">Mobile</span>
+        </button>
+
+        <!-- Device Status Badge -->
+        <div id="deviceBadge" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium bg-slate-800 border border-slate-700 text-slate-400">
           <span id="deviceIndicator" class="w-2 h-2 rounded-full bg-slate-500"></span>
-          <span id="deviceStatusText" class="truncate max-w-[120px] sm:max-w-none">Belum Terhubung</span>
+          <span id="deviceStatusText" class="truncate max-w-[80px] sm:max-w-[120px]">Offline</span>
         </div>
 
-        <button onclick="openConnectModal()" class="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 active:scale-95 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-orange-600/25 transition-all">
+        <!-- Connect Button -->
+        <button onclick="openConnectModal()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 active:scale-95 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-orange-600/25 transition-all">
           <i data-lucide="plug-2" class="w-3.5 h-3.5"></i>
-          <span>Hubungkan</span>
+          <span class="hidden xs:inline">Hubungkan</span>
         </button>
       </div>
+
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-    <!-- LEFT COLUMN: Input, Crop & Image Optimizer (7 cols) -->
-    <div class="lg:col-span-7 flex flex-col gap-4">
+  <!-- MAIN CONTAINER (Default is mobile-frame-mode, toggleable to desktop-frame-mode) -->
+  <main id="mainContainer" class="mobile-frame-mode flex-1 w-full p-3 sm:p-4 transition-all duration-300">
+    
+    <!-- Responsive Grid: Changes class dynamically between 1 col (mobile) & 12 cols (desktop) -->
+    <div id="layoutGrid" class="flex flex-col gap-4">
 
-      <!-- 1. Input Source Card -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <i data-lucide="file-up" class="w-4 h-4 text-orange-400"></i>
-            1. Input Resi Shopee (Screenshot / Dokumen PDF)
-          </h2>
-          <span class="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md font-mono">Bisa Paste (Ctrl+V)</span>
-        </div>
+      <!-- COLUMN 1: Input, Cropper, Optimizer & Sliders -->
+      <div id="colEditor" class="w-full flex flex-col gap-4">
 
-        <!-- Drop & Upload Zone -->
-        <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-orange-500/70 rounded-xl p-5 text-center bg-slate-950/60 transition-all cursor-pointer relative overflow-hidden group">
-          <input type="file" id="fileInput" accept="image/*,application/pdf" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" />
-          <div class="flex flex-col items-center justify-center gap-2.5 py-1">
-            <div class="w-12 h-12 rounded-full bg-slate-800 group-hover:bg-orange-500/20 group-hover:text-orange-400 text-slate-400 flex items-center justify-center transition">
-              <i data-lucide="upload-cloud" class="w-6 h-6"></i>
-            </div>
-            <div>
-              <div class="text-sm font-medium text-slate-200">
-                Pilih atau Tarik Screenshot / File PDF Shopee ke Sini
+        <!-- 1. Input Source Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs sm:text-sm font-semibold text-slate-200 flex items-center gap-2">
+              <i data-lucide="file-up" class="w-4 h-4 text-orange-400"></i>
+              1. Input Resi Shopee (Screenshot / PDF)
+            </h2>
+            <span class="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded font-mono">Bisa Paste</span>
+          </div>
+
+          <!-- Drop & Upload Zone -->
+          <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-orange-500/70 rounded-xl p-4 text-center bg-slate-950/60 transition-all cursor-pointer relative overflow-hidden group">
+            <input type="file" id="fileInput" accept="image/*,application/pdf" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" />
+            <div class="flex flex-col items-center justify-center gap-2 py-1">
+              <div class="w-10 h-10 rounded-full bg-slate-800 group-hover:bg-orange-500/20 group-hover:text-orange-400 text-slate-400 flex items-center justify-center transition">
+                <i data-lucide="upload-cloud" class="w-5 h-5"></i>
               </div>
-              <p class="text-xs text-slate-500 mt-0.5">
-                Mendukung Screenshot HP (PNG, JPG, WebP) & Dokumen Cetak Resi Asli (PDF)
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Interactive Cropper Container -->
-        <div id="cropperContainer" class="hidden mt-4 space-y-3">
-          <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 max-h-[380px] flex items-center justify-center">
-            <img id="cropperImage" class="max-w-full block" alt="Resi Cropper" />
-          </div>
-
-          <!-- Cropper Action Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <button onclick="rotateCrop(-90)" title="Putar -90°" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1">
-                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-              </button>
-              <button onclick="rotateCrop(90)" title="Putar +90°" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1">
-                <i data-lucide="rotate-cw" class="w-4 h-4"></i>
-              </button>
-              <button onclick="resetCrop()" title="Reset Potongan" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1">
-                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-              </button>
-              <button onclick="autoCropShopeeHeaderFooter()" title="Pangkas Status Bar Atas-Bawah HP" class="px-2.5 py-2 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 text-xs font-medium flex items-center gap-1.5 border border-orange-500/30">
-                <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
-                <span>Auto Potong Status Bar</span>
-              </button>
-            </div>
-
-            <button onclick="applyCrop()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
-              <i data-lucide="check" class="w-4 h-4"></i>
-              <span>Terapkan Potongan</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. Thermal Optimization Engine -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm space-y-4">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-orange-400"></i>
-            2. Mesin Penajam Khusus Thermal Barcode
-          </h2>
-          <span class="text-[11px] text-slate-400">Head 80mm (576 Dots)</span>
-        </div>
-
-        <!-- 1-Click Presets -->
-        <div class="space-y-1.5">
-          <label class="text-xs font-medium text-slate-400">Preset Cepat 1-Klik:</label>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button onclick="applyPreset('ultra_sharp')" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-orange-500/20 border border-slate-700 hover:border-orange-500/40 text-left transition group">
-              <div class="text-[11px] font-semibold text-slate-200 group-hover:text-orange-400">Shopee Ultra-Sharp</div>
-              <div class="text-[9px] text-slate-400">Barcode Anti-Blur</div>
-            </button>
-            <button onclick="applyPreset('bold_text')" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-orange-500/20 border border-slate-700 hover:border-orange-500/40 text-left transition group">
-              <div class="text-[11px] font-semibold text-slate-200 group-hover:text-orange-400">Teks Ekstra Pekat</div>
-              <div class="text-[9px] text-slate-400">Alamat Jelas</div>
-            </button>
-            <button onclick="applyPreset('adaptive')" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-orange-500/20 border border-slate-700 hover:border-orange-500/40 text-left transition group">
-              <div class="text-[11px] font-semibold text-slate-200 group-hover:text-orange-400">Adaptif Sauvola</div>
-              <div class="text-[9px] text-slate-400">Ratakan Layar HP</div>
-            </button>
-            <button onclick="applyPreset('natural')" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition">
-              <div class="text-[11px] font-semibold text-slate-200">Natural Standard</div>
-              <div class="text-[9px] text-slate-400">Tanpa Filter Ekstrem</div>
-            </button>
-          </div>
-        </div>
-
-        <!-- Binarization Algorithm & Line Thinning -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-          <div class="space-y-1">
-            <label class="text-xs font-medium text-slate-300 flex items-center justify-between">
-              <span>Algoritma Binarisasi</span>
-              <span id="algoHint" class="text-[10px] text-orange-400 font-mono">Biner Murni</span>
-            </label>
-            <select id="ditherMode" onchange="processThermalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-orange-500">
-              <option value="threshold" selected>Biner Murni (Threshold) - Barcode Paling Tajam</option>
-              <option value="sauvola">Adaptif Sauvola (Mengoreksi Gradien/Bayangan Layar)</option>
-              <option value="otsu">Otsu Automatic Threshold (Kalkulasi Otomatis)</option>
-              <option value="floyd">Floyd-Steinberg Dithering (Foto / Logo Halus)</option>
-              <option value="atkinson">Atkinson Dithering (Khas Thermal Retro)</option>
-            </select>
-          </div>
-
-          <!-- Barcode Anti-Bleed / Line Thinning -->
-          <div class="space-y-1">
-            <label class="text-xs font-medium text-slate-300 flex items-center justify-between">
-              <span>Anti-Bleed (Ketebalan Garis Barcode)</span>
-              <span class="text-[10px] text-slate-400">Cegah Garis Menempel</span>
-            </label>
-            <select id="lineThickness" onchange="processThermalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-orange-500">
-              <option value="-2">Pangkas Ekstra (-2px) - Jika Garis Menempel Parah</option>
-              <option value="-1">Pangkas Halus (-1px) - Direkomendasikan untuk 80mm</option>
-              <option value="0" selected>Normal (0px - Sesuai Gambar)</option>
-              <option value="1">Pertebal (+1px) - Jika Barcode Putus-putus</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Sliders: Sharpening, Threshold, Contrast, Brightness -->
-        <div class="space-y-3 pt-2">
-          <!-- Convolution Sharpening Slider -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium flex items-center gap-1.5">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-400"></i>
-                Ketajaman Tepi (Convolution Sharpening)
-              </span>
-              <span id="valSharpen" class="font-mono text-orange-400 font-semibold">1.8x</span>
-            </div>
-            <input type="range" id="inputSharpen" min="0" max="4" step="0.2" value="1.8" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
-            <p class="text-[10px] text-slate-500">Menegaskan garis barcode & font kecil resi sebelum resolusi dikecilkan ke 576 dots.</p>
-          </div>
-
-          <!-- Threshold Slider -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Ambang Hitam (Threshold)</span>
-              <span id="valThreshold" class="font-mono text-orange-400 font-semibold">145</span>
-            </div>
-            <input type="range" id="inputThreshold" min="50" max="230" value="145" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
-            <p class="text-[10px] text-slate-500">Turunkan jika sela putih barcode tertutup hitam. Naikkan jika angka alamat tampak pudar.</p>
-          </div>
-
-          <!-- Contrast Slider -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Kontras</span>
-              <span id="valContrast" class="font-mono text-orange-400 font-semibold">+30%</span>
-            </div>
-            <input type="range" id="inputContrast" min="-50" max="100" value="30" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
-          </div>
-
-          <!-- Gamma Slider -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-300 font-medium">Koreksi Gamma</span>
-              <span id="valGamma" class="font-mono text-orange-400 font-semibold">1.10</span>
-            </div>
-            <input type="range" id="inputGamma" min="0.5" max="2.0" step="0.05" value="1.1" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
-          </div>
-
-          <!-- Invert & Reset -->
-          <div class="flex items-center justify-between pt-1">
-            <label class="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-300">
-              <input type="checkbox" id="checkInvert" onchange="processThermalPreview()" class="rounded bg-slate-800 border-slate-700 text-orange-600 focus:ring-0 w-4 h-4 cursor-pointer" />
-              <span>Invert Warna (Negatif)</span>
-            </label>
-
-            <button onclick="restoreDefaultAdjustments()" class="text-[11px] text-slate-400 hover:text-slate-200 underline">
-              Kembalikan Default
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- RIGHT COLUMN: Thermal Live Dot Preview, Barcode Validator & Print Controls (5 cols) -->
-    <div class="lg:col-span-5 flex flex-col gap-4">
-
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <i data-lucide="eye" class="w-4 h-4 text-orange-400"></i>
-            Live Thermal Preview (1-Bit)
-          </h2>
-          <span id="renderMeta" class="text-[10px] font-mono text-slate-400">576 x 0 dots</span>
-        </div>
-
-        <!-- Real-time Barcode Detector Validation Banner -->
-        <div id="barcodeBadge" class="mb-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-2.5 transition">
-          <div id="barcodeIconContainer" class="p-1.5 rounded-lg bg-slate-800 text-slate-400">
-            <i data-lucide="scan-barcode" class="w-4 h-4"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div id="barcodeStatusText" class="text-xs font-semibold text-slate-300 truncate">
-              Menunggu input resi...
-            </div>
-            <div id="barcodeSubText" class="text-[10px] text-slate-500 truncate">
-              Sistem akan memverifikasi barcode sebelum dicetak
-            </div>
-          </div>
-        </div>
-
-        <!-- Realistic Thermal Paper Visualizer -->
-        <div class="bg-slate-950 p-3 sm:p-4 rounded-xl border border-slate-800 flex justify-center items-start min-h-[380px] max-h-[500px] overflow-y-auto">
-          <div id="previewPaper" class="thermal-paper rounded-t-sm w-full max-w-[320px] flex flex-col items-center p-2 text-black transition-all">
-
-            <div id="placeholderText" class="py-24 px-4 text-center text-slate-400 space-y-2">
-              <i data-lucide="receipt" class="w-10 h-10 mx-auto text-slate-300 stroke-[1.5]"></i>
-              <p class="text-xs font-medium">Unggah screenshot atau file PDF resi Shopee untuk melihat simulasi cetak titik thermal.</p>
-            </div>
-
-            <!-- Monochrome Dot Preview Canvas (576px wide) -->
-            <canvas id="previewCanvas" class="w-full h-auto block rounded-sm"></canvas>
-
-            <!-- Hidden print element for fallback -->
-            <div id="printArea" class="hidden">
-              <img id="printImageFallback" class="w-full" alt="Resi Shopee Thermal" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Hardware & Output Action Buttons -->
-        <div class="mt-4 space-y-2.5">
-          <!-- Primary ESC/POS Direct Print Button -->
-          <button id="btnPrintDirect" onclick="printThermalDirect()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 hover:from-orange-500 hover:to-amber-500 active:scale-[0.98] text-white font-bold text-sm shadow-lg shadow-orange-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:pointer-events-none">
-            <i data-lucide="zap" class="w-4 h-4"></i>
-            <span id="btnPrintText">Cetak ke MiniPOS MP-80UBX</span>
-          </button>
-
-          <!-- Printing Progress Bar -->
-          <div id="printProgressBarContainer" class="hidden space-y-1 pt-1">
-            <div class="flex justify-between text-[11px] text-slate-400">
-              <span id="printProgressLabel">Mengirim paket raster anti-buffer...</span>
-              <span id="printProgressPercent" class="font-mono text-orange-400">0%</span>
-            </div>
-            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div id="printProgressBar" class="h-full bg-gradient-to-r from-orange-500 to-amber-400 w-0 transition-all duration-100"></div>
-            </div>
-          </div>
-
-          <!-- Secondary Channels: RawBT Intent, bin download, System print -->
-          <div class="grid grid-cols-3 gap-2">
-            <!-- RawBT Android Intent (Best for Android Classic Bluetooth) -->
-            <button onclick="printViaRawBT()" title="Kirim langsung ke RawBT Print Service Android" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-medium flex flex-col items-center justify-center gap-1 border border-slate-700/70 transition">
-              <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
-              <span class="text-[11px] font-semibold text-emerald-400">Cetak RawBT</span>
-            </button>
-
-            <!-- Download ESC/POS .bin -->
-            <button onclick="downloadEscPosBin()" title="Download file biner printer thermal .bin" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-medium flex flex-col items-center justify-center gap-1 border border-slate-700/70 transition">
-              <i data-lucide="download" class="w-4 h-4 text-cyan-400"></i>
-              <span class="text-[11px]">Simpan .bin</span>
-            </button>
-
-            <!-- Standard Window Print -->
-            <button onclick="systemPrintFallback()" title="Dialog Print Bawaan Android / Browser" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-medium flex flex-col items-center justify-center gap-1 border border-slate-700/70 transition">
-              <i data-lucide="printer" class="w-4 h-4 text-amber-400"></i>
-              <span class="text-[11px]">System Print</span>
-            </button>
-          </div>
-
-          <!-- Advanced MiniPOS Hardware Parameters Toggle -->
-          <div class="pt-2 border-t border-slate-800">
-            <button onclick="toggleAdvancedSettings()" class="w-full flex items-center justify-between text-xs text-slate-400 hover:text-slate-200">
-              <span class="flex items-center gap-1.5 font-medium">
-                <i data-lucide="settings-2" class="w-3.5 h-3.5 text-orange-400"></i>
-                Konfigurasi Head & Buffer Anti-Karakter Rusak
-              </span>
-              <i id="advancedChevron" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200"></i>
-            </button>
-
-            <div id="advancedSettingsPanel" class="hidden mt-3 p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-3 text-xs">
-              <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-1">
-                  <label class="text-[11px] text-slate-300">Lebar Cetak Dot:</label>
-                  <select id="cfgDotWidth" onchange="processThermalPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200">
-                    <option value="576" selected>576 Dots (72 Bytes - MP-80UBX)</option>
-                    <option value="512">512 Dots (64 Bytes - Alternatif 80mm)</option>
-                  </select>
+              <div>
+                <div class="text-xs sm:text-sm font-medium text-slate-200">
+                  Pilih / Tarik Screenshot / PDF ke Sini
                 </div>
-                <div class="space-y-1">
-                  <label class="text-[11px] text-slate-300">Jeda Pengiriman (Throttle):</label>
-                  <select id="cfgBufferDelay" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200">
-                    <option value="15">Cepat (15 ms)</option>
-                    <option value="30" selected>Stabil (30 ms - Sangat Direkomendasikan)</option>
-                    <option value="50">Ekstra Aman (50 ms - Bluetooth Lemah)</option>
-                  </select>
-                </div>
+                <p class="text-[11px] text-slate-500 mt-0.5">
+                  Mendukung tangkapan layar HP (PNG/JPG) & PDF Shopee native
+                </p>
               </div>
+            </div>
+          </div>
 
-              <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-1">
-                  <label class="text-[11px] text-slate-300">Ukuran Strip Slice:</label>
-                  <select id="cfgSliceHeight" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200">
-                    <option value="24">24 Lines (Buffer Ringan)</option>
-                    <option value="32" selected>32 Lines (Optimal MP-80UBX)</option>
-                    <option value="48">48 Lines (Kecepatan Tinggi)</option>
-                  </select>
-                </div>
-                <div class="space-y-1">
-                  <label class="text-[11px] text-slate-300">Auto Cut Kertas:</label>
-                  <select id="cfgAutoCut" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200">
-                    <option value="yes" selected>Potong Otomatis (Full / Partial)</option>
-                    <option value="no">Manual Sobek (Feed Saja)</option>
-                  </select>
-                </div>
-              </div>
+          <!-- Interactive Cropper Container -->
+          <div id="cropperContainer" class="hidden mt-3 space-y-2.5">
+            <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 max-h-[320px] sm:max-h-[380px] flex items-center justify-center">
+              <img id="cropperImage" class="max-w-full block" alt="Resi Cropper" />
+            </div>
 
-              <div class="flex items-center justify-between pt-1 border-t border-slate-800">
-                <button onclick="sendTestPattern()" class="text-orange-400 hover:text-orange-300 flex items-center gap-1 text-[11px]">
-                  <i data-lucide="activity" class="w-3.5 h-3.5"></i>
-                  <span>Test Pola Garis & Header</span>
+            <!-- Cropper Actions -->
+            <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1">
+              <div class="flex items-center gap-1 flex-wrap">
+                <button onclick="rotateCrop(-90)" title="Putar -90°" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="sendCutCommand()" class="text-slate-400 hover:text-white flex items-center gap-1 text-[11px]">
-                  <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
-                  <span>Feed & Cut Kertas</span>
+                <button onclick="rotateCrop(90)" title="Putar +90°" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">
+                  <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="resetCrop()" title="Reset Potongan" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="autoCropShopeeHeaderFooter()" title="Pangkas Status Bar Atas-Bawah HP" class="px-2.5 py-1.5 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 text-[11px] font-medium flex items-center gap-1 border border-orange-500/30">
+                  <i data-lucide="scissors" class="w-3 h-3"></i>
+                  <span>Auto Pangkas HP</span>
                 </button>
               </div>
+
+              <button onclick="applyCrop()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1 shadow-sm transition">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>Terapkan Potongan</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Thermal Optimization Engine -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm space-y-3.5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xs sm:text-sm font-semibold text-slate-200 flex items-center gap-2">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4 text-orange-400"></i>
+              2. Mesin Penajam Thermal & Barcode
+            </h2>
+            <span class="text-[10px] text-slate-400">Head 80mm</span>
+          </div>
+
+          <!-- 1-Click Presets -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-medium text-slate-400">Preset Cepat 1-Klik:</label>
+            <div class="grid grid-cols-2 gap-1.5 sm:gap-2">
+              <button onclick="applyPreset('ultra_sharp')" class="py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-orange-500/20 border border-slate-700 hover:border-orange-500/40 text-left transition group">
+                <div class="text-[11px] font-semibold text-slate-200 group-hover:text-orange-400">Shopee Ultra-Sharp</div>
+                <div class="text-[9px] text-slate-400">Barcode Anti-Blur</div>
+              </button>
+              <button onclick="applyPreset('bold_text')" class="py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-orange-500/20 border border-slate-700 hover:border-orange-500/40 text-left transition group">
+                <div class="text-[11px] font-semibold text-slate-200 group-hover:text-orange-400">Teks Ekstra Pekat</div>
+                <div class="text-[9px] text-slate-400">Alamat Jelas</div>
+              </button>
+              <button onclick="applyPreset('adaptive')" class="py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-orange-500/20 border border-slate-700 hover:border-orange-500/40 text-left transition group">
+                <div class="text-[11px] font-semibold text-slate-200 group-hover:text-orange-400">Adaptif Sauvola</div>
+                <div class="text-[9px] text-slate-400">Ratakan Layar HP</div>
+              </button>
+              <button onclick="applyPreset('natural')" class="py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition">
+                <div class="text-[11px] font-semibold text-slate-200">Natural Standard</div>
+                <div class="text-[9px] text-slate-400">Tanpa Filter Ekstrem</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Binarization Algorithm & Line Thinning -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div class="space-y-1">
+              <label class="text-[11px] font-medium text-slate-300 flex items-center justify-between">
+                <span>Algoritma Binarisasi</span>
+                <span id="algoHint" class="text-[10px] text-orange-400 font-mono">Biner Murni</span>
+              </label>
+              <select id="ditherMode" onchange="processThermalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-orange-500">
+                <option value="threshold" selected>Biner Murni (Threshold) - Barcode Tajam</option>
+                <option value="sauvola">Adaptif Sauvola (Koreksi Bayangan Layar)</option>
+                <option value="otsu">Otsu Automatic Threshold (Auto)</option>
+                <option value="floyd">Floyd-Steinberg Dithering (Foto/Logo)</option>
+                <option value="atkinson">Atkinson Dithering (Khas Thermal)</option>
+              </select>
+            </div>
+
+            <!-- Anti Bleed -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-medium text-slate-300 flex items-center justify-between">
+                <span>Anti-Bleed (Tebal Garis Barcode)</span>
+                <span class="text-[10px] text-slate-400">Cegah Meleleh</span>
+              </label>
+              <select id="lineThickness" onchange="processThermalPreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-orange-500">
+                <option value="-2">Pangkas Ekstra (-2px) - Garis Rapat Parah</option>
+                <option value="-1">Pangkas Halus (-1px) - Direkomendasikan</option>
+                <option value="0" selected>Normal (0px - Sesuai Gambar)</option>
+                <option value="1">Pertebal (+1px) - Jika Putus-putus</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Sliders -->
+          <div class="space-y-2.5 pt-1">
+            <!-- Convolution Sharpening Slider -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium flex items-center gap-1">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-400"></i>
+                  Ketajaman Tepi (Convolution Sharpening)
+                </span>
+                <span id="valSharpen" class="font-mono text-orange-400 font-semibold">1.8x</span>
+              </div>
+              <input type="range" id="inputSharpen" min="0" max="4" step="0.2" value="1.8" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            </div>
+
+            <!-- Threshold Slider -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Ambang Hitam (Threshold)</span>
+                <span id="valThreshold" class="font-mono text-orange-400 font-semibold">145</span>
+              </div>
+              <input type="range" id="inputThreshold" min="50" max="230" value="145" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            </div>
+
+            <!-- Contrast Slider -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Kontras</span>
+                <span id="valContrast" class="font-mono text-orange-400 font-semibold">+30%</span>
+              </div>
+              <input type="range" id="inputContrast" min="-50" max="100" value="30" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            </div>
+
+            <!-- Gamma Slider -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300 font-medium">Koreksi Gamma</span>
+                <span id="valGamma" class="font-mono text-orange-400 font-semibold">1.10</span>
+              </div>
+              <input type="range" id="inputGamma" min="0.5" max="2.0" step="0.05" value="1.1" oninput="updateSliderLabels(); processThermalPreview();" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            </div>
+
+            <!-- Invert & Reset -->
+            <div class="flex items-center justify-between pt-1">
+              <label class="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-300">
+                <input type="checkbox" id="checkInvert" onchange="processThermalPreview()" class="rounded bg-slate-800 border-slate-700 text-orange-600 focus:ring-0 w-4 h-4 cursor-pointer" />
+                <span>Invert Warna (Negatif)</span>
+              </label>
+
+              <button onclick="restoreDefaultAdjustments()" class="text-[11px] text-slate-400 hover:text-slate-200 underline">
+                Kembalikan Default
+              </button>
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- Quick Guidance Box -->
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-400 space-y-1.5">
-        <div class="flex items-center gap-1.5 text-slate-300 font-semibold">
-          <i data-lucide="check-check" class="w-4 h-4 text-emerald-400"></i>
-          <span>Panduan Cetak Tanpa Gagal MiniPOS MP-80UBX:</span>
+
+      <!-- COLUMN 2: Thermal Live Dot Preview, Barcode Validator & Controls -->
+      <div id="colPreview" class="w-full flex flex-col gap-4">
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between mb-2.5">
+            <h2 class="text-xs sm:text-sm font-semibold text-slate-200 flex items-center gap-2">
+              <i data-lucide="eye" class="w-4 h-4 text-orange-400"></i>
+              Live Thermal Preview (1-Bit)
+            </h2>
+            <span id="renderMeta" class="text-[10px] font-mono text-slate-400">576 x 0 dots</span>
+          </div>
+
+          <!-- Real-time Barcode Detector Validation Banner -->
+          <div id="barcodeBadge" class="mb-2.5 p-2 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-2 transition">
+            <div id="barcodeIconContainer" class="p-1 rounded-lg bg-slate-800 text-slate-400">
+              <i data-lucide="scan-barcode" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div id="barcodeStatusText" class="text-[11px] font-semibold text-slate-300 truncate">
+                Menunggu input resi...
+              </div>
+              <div id="barcodeSubText" class="text-[9px] text-slate-500 truncate">
+                Sistem akan memverifikasi barcode sebelum dicetak
+              </div>
+            </div>
+          </div>
+
+          <!-- Realistic Thermal Paper Visualizer -->
+          <div class="bg-slate-950 p-2 sm:p-3 rounded-xl border border-slate-800 flex justify-center items-start min-h-[320px] max-h-[460px] overflow-y-auto">
+            <div id="previewPaper" class="thermal-paper rounded-t-sm w-full max-w-[310px] flex flex-col items-center p-2 text-black transition-all">
+
+              <div id="placeholderText" class="py-20 px-3 text-center text-slate-400 space-y-2">
+                <i data-lucide="receipt" class="w-8 h-8 mx-auto text-slate-300 stroke-[1.5]"></i>
+                <p class="text-xs font-medium">Unggah screenshot atau file PDF resi Shopee untuk melihat simulasi cetak titik thermal.</p>
+              </div>
+
+              <!-- Monochrome Dot Preview Canvas (576px wide) -->
+              <canvas id="previewCanvas" class="w-full h-auto block rounded-sm"></canvas>
+
+              <!-- Hidden print element for fallback -->
+              <div id="printArea" class="hidden">
+                <img id="printImageFallback" class="w-full" alt="Resi Shopee Thermal" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Hardware & Output Action Buttons -->
+          <div class="mt-3.5 space-y-2">
+            <!-- Primary ESC/POS Direct Print Button -->
+            <button id="btnPrintDirect" onclick="printThermalDirect()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 hover:from-orange-500 hover:to-amber-500 active:scale-[0.98] text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:pointer-events-none">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span id="btnPrintText">Cetak ke MiniPOS MP-80UBX</span>
+            </button>
+
+            <!-- Printing Progress Bar -->
+            <div id="printProgressBarContainer" class="hidden space-y-1 pt-1">
+              <div class="flex justify-between text-[11px] text-slate-400">
+                <span id="printProgressLabel">Mengirim paket raster anti-buffer...</span>
+                <span id="printProgressPercent" class="font-mono text-orange-400">0%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div id="printProgressBar" class="h-full bg-gradient-to-r from-orange-500 to-amber-400 w-0 transition-all duration-100"></div>
+              </div>
+            </div>
+
+            <!-- Secondary Channels: RawBT Intent, bin download, System print -->
+            <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+              <!-- RawBT Android Intent (Best for Android Classic Bluetooth) -->
+              <button onclick="printViaRawBT()" title="Kirim langsung ke RawBT Print Service Android" class="py-2 px-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-medium flex flex-col items-center justify-center gap-1 border border-slate-700/70 transition">
+                <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span class="text-[10px] sm:text-[11px] font-semibold text-emerald-400">Cetak RawBT</span>
+              </button>
+
+              <!-- Download ESC/POS .bin -->
+              <button onclick="downloadEscPosBin()" title="Download file biner printer thermal .bin" class="py-2 px-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-medium flex flex-col items-center justify-center gap-1 border border-slate-700/70 transition">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span class="text-[10px] sm:text-[11px]">Simpan .bin</span>
+              </button>
+
+              <!-- Standard Window Print -->
+              <button onclick="systemPrintFallback()" title="Dialog Print Bawaan Android / Browser" class="py-2 px-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-medium flex flex-col items-center justify-center gap-1 border border-slate-700/70 transition">
+                <i data-lucide="printer" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span class="text-[10px] sm:text-[11px]">System Print</span>
+              </button>
+            </div>
+
+            <!-- Advanced MiniPOS Hardware Parameters Toggle -->
+            <div class="pt-2 border-t border-slate-800">
+              <button onclick="toggleAdvancedSettings()" class="w-full flex items-center justify-between text-xs text-slate-400 hover:text-slate-200">
+                <span class="flex items-center gap-1.5 font-medium">
+                  <i data-lucide="settings-2" class="w-3.5 h-3.5 text-orange-400"></i>
+                  Konfigurasi Head & Buffer Anti-Karakter Rusak
+                </span>
+                <i id="advancedChevron" data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+              </button>
+
+              <div id="advancedSettingsPanel" class="hidden mt-2.5 p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-slate-300">Lebar Cetak Dot:</label>
+                    <select id="cfgDotWidth" onchange="processThermalPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200 text-xs">
+                      <option value="576" selected>576 Dots (72B - MP-80UBX)</option>
+                      <option value="512">512 Dots (64B - Alternatif)</option>
+                    </select>
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-slate-300">Jeda Throttle:</label>
+                    <select id="cfgBufferDelay" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200 text-xs">
+                      <option value="15">Cepat (15 ms)</option>
+                      <option value="30" selected>Stabil (30 ms)</option>
+                      <option value="50">Ekstra Aman (50 ms)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-slate-300">Ukuran Strip Slice:</label>
+                    <select id="cfgSliceHeight" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200 text-xs">
+                      <option value="24">24 Lines</option>
+                      <option value="32" selected>32 Lines (Optimal)</option>
+                      <option value="48">48 Lines</option>
+                    </select>
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-slate-300">Auto Cut Kertas:</label>
+                    <select id="cfgAutoCut" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200 text-xs">
+                      <option value="yes" selected>Potong Otomatis</option>
+                      <option value="no">Manual Sobek</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-800">
+                  <button onclick="sendTestPattern()" class="text-orange-400 hover:text-orange-300 flex items-center gap-1 text-[10px]">
+                    <i data-lucide="activity" class="w-3 h-3"></i>
+                    <span>Test Pola Garis</span>
+                  </button>
+                  <button onclick="sendCutCommand()" class="text-slate-400 hover:text-white flex items-center gap-1 text-[10px]">
+                    <i data-lucide="scissors" class="w-3 h-3"></i>
+                    <span>Feed & Cut Kertas</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <p>1. <strong>Untuk HP Android via Bluetooth:</strong> Karena modul Bluetooth printer struk umumnya bertipe <em>Classic (SPP)</em>, gunakan tombol hijau <strong>"Cetak RawBT"</strong> untuk bypass limitasi browser.</p>
-        <p>2. <strong>Untuk Kabel USB OTG:</strong> Buka dialog <strong>Hubungkan</strong> &rarr; pilih <strong>Kabel USB OTG (Serial)</strong>.</p>
-        <p>3. <strong>Cegah Karakter Rusak:</strong> Kode print ini sudah dimurnikan menggunakan raster <em>GS v 0</em> bersegmen murni tanpa perintah <code>ESC 7</code>.</p>
+
+        <!-- Quick Guidance Box -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3 text-xs text-slate-400 space-y-1">
+          <div class="flex items-center gap-1.5 text-slate-300 font-semibold text-[11px]">
+            <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Tips MiniPOS MP-80UBX:</span>
+          </div>
+          <p class="text-[11px]">1. <strong>HP Android via Bluetooth:</strong> Gunakan tombol <strong>"Cetak RawBT"</strong> untuk mencetak tanpa batas Bluetooth Classic.</p>
+          <p class="text-[11px]">2. <strong>Kabel USB OTG:</strong> Buka dialog <strong>Hubungkan</strong> &rarr; pilih <strong>Kabel USB OTG</strong>.</p>
+          <p class="text-[11px]">3. <strong>Anti Karakter Rusak:</strong> Protokol murni <code>GS v 0</code> bebas <code>ESC 7</code>.</p>
+        </div>
+
       </div>
 
     </div>
 
   </main>
 
+
   <!-- Connection Selection Modal -->
-  <div id="connectModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-slate-100 flex items-center gap-2 text-sm sm:text-base">
-          <i data-lucide="radio" class="w-5 h-5 text-orange-500"></i>
+  <div id="connectModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-4 sm:p-5 space-y-3.5 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <h3 class="font-bold text-slate-100 flex items-center gap-2 text-xs sm:text-sm">
+          <i data-lucide="radio" class="w-4 h-4 text-orange-500"></i>
           Pilih Jalur Koneksi MiniPOS
         </h3>
         <button onclick="closeConnectModal()" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
-          <i data-lucide="x" class="w-5 h-5"></i>
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-2.5">
         <!-- Bluetooth Option -->
-        <button onclick="connectBluetooth()" class="w-full text-left p-3.5 rounded-xl bg-slate-950 hover:bg-slate-800/90 border border-slate-800 hover:border-orange-500/50 flex items-start gap-3 transition group">
-          <div class="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition">
-            <i data-lucide="bluetooth" class="w-5 h-5"></i>
+        <button onclick="connectBluetooth()" class="w-full text-left p-3 rounded-xl bg-slate-950 hover:bg-slate-800/90 border border-slate-800 hover:border-orange-500/50 flex items-start gap-3 transition group">
+          <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition">
+            <i data-lucide="bluetooth" class="w-4 h-4"></i>
           </div>
           <div class="flex-1">
             <div class="text-xs font-semibold text-white group-hover:text-orange-400 flex items-center justify-between">
-              <span>Bluetooth Web BLE (Nirkabel)</span>
-              <span class="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">GATT Direct</span>
+              <span>Bluetooth Web BLE</span>
+              <span class="text-[9px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">GATT Direct</span>
             </div>
-            <p class="text-[11px] text-slate-400 mt-0.5">Scan BLE thermal printer dengan auto-discovery UUID lengkap.</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Scan BLE thermal printer dengan auto-discovery UUID lengkap.</p>
           </div>
         </button>
 
         <!-- USB OTG Option (Web Serial / WebUSB) -->
-        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-              <i data-lucide="usb" class="w-5 h-5"></i>
+            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <i data-lucide="usb" class="w-4 h-4"></i>
             </div>
             <div class="flex-1">
               <div class="text-xs font-semibold text-white flex items-center justify-between">
                 <span>Kabel USB OTG / Serial COM</span>
-                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Super Stabil</span>
+                <span class="text-[9px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Super Stabil</span>
               </div>
-              <p class="text-[11px] text-slate-400 mt-0.5">Sambungkan kabel USB printer ke HP via konektor OTG.</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Sambungkan kabel USB printer ke HP via konektor OTG.</p>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 pt-1">
+          <div class="flex items-center gap-2 pt-0.5">
             <div class="w-1/2">
-              <label class="text-[10px] text-slate-400">Baud Rate:</label>
-              <select id="cfgBaudRate" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-slate-200">
-                <option value="9600" selected>9600 (Bawaan MP-80UBX)</option>
+              <label class="text-[9px] text-slate-400">Baud Rate:</label>
+              <select id="cfgBaudRate" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1 text-[11px] text-slate-200">
+                <option value="9600" selected>9600 (MP-80UBX)</option>
                 <option value="19200">19200</option>
                 <option value="38400">38400</option>
                 <option value="115200">115200</option>
               </select>
             </div>
             <div class="w-1/2 flex items-end">
-              <button onclick="connectSerial()" class="w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition">
-                <i data-lucide="cable" class="w-3.5 h-3.5"></i>
+              <button onclick="connectSerial()" class="w-full py-1.5 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold flex items-center justify-center gap-1 shadow-sm transition">
+                <i data-lucide="cable" class="w-3 h-3"></i>
                 <span>Buka Port USB</span>
               </button>
             </div>
@@ -544,71 +578,71 @@
         </div>
 
         <!-- RawBT App Direct Integration Option -->
-        <div class="p-3.5 rounded-xl bg-slate-950 border border-emerald-900/40 space-y-2">
+        <div class="p-3 rounded-xl bg-slate-950 border border-emerald-900/40 space-y-1.5">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 rounded-lg bg-emerald-500/20 text-emerald-400">
-              <i data-lucide="smartphone" class="w-5 h-5"></i>
+            <div class="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">
+              <i data-lucide="smartphone" class="w-4 h-4"></i>
             </div>
             <div class="flex-1">
               <div class="text-xs font-semibold text-emerald-300 flex items-center justify-between">
-                <span>RawBT Print Bridge (Solusi Anti-Gagal)</span>
-                <span class="text-[10px] text-emerald-300 bg-emerald-500/20 px-1.5 py-0.5 rounded">Rekomendasi HP</span>
+                <span>RawBT Print Bridge</span>
+                <span class="text-[9px] text-emerald-300 bg-emerald-500/20 px-1.5 py-0.5 rounded">Rekomendasi HP</span>
               </div>
-              <p class="text-[11px] text-slate-400 mt-0.5">Gunakan ini jika Bluetooth printer tidak terdeteksi oleh browser Chrome.</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Gunakan ini jika Bluetooth printer tidak terdeteksi oleh browser.</p>
             </div>
           </div>
-          <button onclick="printViaRawBT()" class="w-full py-2 px-3 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition">
-            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+          <button onclick="printViaRawBT()" class="w-full py-1.5 px-2.5 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center justify-center gap-1 transition">
+            <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
             <span>Langsung Teruskan Resi ke RawBT</span>
           </button>
         </div>
       </div>
 
       <!-- Active Connection Status -->
-      <div id="modalActiveDevice" class="hidden p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+      <div id="modalActiveDevice" class="hidden p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
         <div>
           <span class="text-slate-400">Aktif:</span>
           <span id="modalDeviceName" class="font-semibold text-slate-200 ml-1">MiniPOS 80mm</span>
         </div>
-        <button onclick="disconnectPrinter()" class="px-2 py-1 text-red-400 hover:bg-red-500/10 rounded font-medium">
+        <button onclick="disconnectPrinter()" class="px-2 py-0.5 text-red-400 hover:bg-red-500/10 rounded font-medium">
           Putuskan
         </button>
       </div>
 
-      <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-800/60 leading-relaxed">
-        * Pastikan Bluetooth HP aktif dan printer menyala. PIN default pairing Bluetooth MiniPOS adalah <span class="font-mono text-slate-300">0000</span> atau <span class="font-mono text-slate-300">1234</span>.
+      <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-800/60 leading-relaxed">
+        * Pastikan Bluetooth HP aktif dan printer menyala. PIN pairing: <span class="font-mono text-slate-300">0000</span> atau <span class="font-mono text-slate-300">1234</span>.
       </div>
     </div>
   </div>
 
   <!-- Diagnostic & Troubleshooting Modal -->
-  <div id="diagModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-amber-400 flex items-center gap-2 text-sm sm:text-base">
-          <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+  <div id="diagModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-4 sm:p-5 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <h3 class="font-bold text-amber-400 flex items-center gap-2 text-xs sm:text-sm">
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i>
           Penyebab Printer Tidak Muncul di Browser
         </h3>
         <button onclick="closeDiagModal()" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
-          <i data-lucide="x" class="w-5 h-5"></i>
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
+      <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
         <p>Printer thermal <strong>MiniPOS MP-80UBX</strong> Anda sebagian besar menggunakan modul <strong>Bluetooth Classic (SPP / Serial Port Profile)</strong>.</p>
         
-        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-          <div class="font-semibold text-white flex items-center gap-1.5">
-            <i data-lucide="info" class="w-4 h-4 text-blue-400"></i>
+        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+          <div class="font-semibold text-white flex items-center gap-1.5 text-[11px]">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-blue-400"></i>
             Mengapa Browser Chrome Tidak Bisa Menemukannya?
           </div>
-          <p class="text-slate-400 text-[11px]">
-            Google Chrome hanya menyediakan API untuk <strong>Bluetooth Low Energy (BLE)</strong> dan membatasi koneksi langsung ke Bluetooth Classic demi alasan keamanan sistem operasi.
+          <p class="text-slate-400 text-[10px]">
+            Browser hanya menyediakan API untuk <strong>Bluetooth Low Energy (BLE)</strong> dan membatasi koneksi langsung ke Bluetooth Classic demi alasan keamanan OS.
           </p>
         </div>
 
-        <div class="font-semibold text-slate-100">Solusi Instan yang Pasti Berhasil:</div>
-        <ol class="list-decimal pl-4 space-y-1.5 text-slate-300 text-[11px]">
+        <div class="font-semibold text-slate-100 text-[11px]">Solusi Instan yang Pasti Berhasil:</div>
+        <ol class="list-decimal pl-4 space-y-1 text-slate-300 text-[10px]">
           <li>Buka <strong>Pengaturan HP &rarr; Bluetooth</strong> dan pasangkan printer (PIN: <code class="bg-slate-800 px-1 py-0.5 rounded">0000</code> atau <code class="bg-slate-800 px-1 py-0.5 rounded">1234</code>).</li>
           <li>Install aplikasi gratis <strong>RawBT Print Service</strong> dari Google Play Store.</li>
           <li>Di webapp ini, Anda cukup klik tombol hijau <strong>"Cetak RawBT"</strong>. Webapp akan meneruskan gambar resi ultra-tajam ke RawBT untuk langsung dicetak tanpa kendala browser.</li>
@@ -617,8 +651,8 @@
       </div>
 
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-        <button onclick="closeDiagModal(); printViaRawBT();" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center gap-1.5">
-          <i data-lucide="smartphone" class="w-4 h-4"></i>
+        <button onclick="closeDiagModal(); printViaRawBT();" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center gap-1.5">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
           <span>Gunakan RawBT Sekarang</span>
         </button>
       </div>
@@ -626,10 +660,11 @@
   </div>
 
   <!-- Notification Toast Box -->
-  <div id="toast" class="fixed bottom-5 right-5 left-5 sm:left-auto sm:w-80 bg-slate-800 border border-slate-700 text-slate-100 text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+  <div id="toast" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:w-80 bg-slate-800 border border-slate-700 text-slate-100 text-xs px-3.5 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
     <div id="toastIcon"></div>
     <div id="toastMessage" class="flex-1"></div>
   </div>
+
 
   <script>
     // State variables
@@ -646,6 +681,9 @@
     let usbEndpointOut = null;
     let zxingReader = null;
 
+    // View state: 'mobile' (default) or 'desktop'
+    let currentViewMode = 'mobile';
+
     // Full thermal printer GATT UUIDs (16-bit and 128-bit)
     const EXTENDED_BLE_SERVICES = [
       '000018f0-0000-1000-8000-00805f9b34fb', // Standard Thermal ESC/POS
@@ -661,6 +699,9 @@
       lucide.createIcons();
       initClipboardAndDrop();
 
+      // Apply initial view mode (Mobile Default)
+      applyViewMode(currentViewMode);
+
       try {
         if (window.ZXing) {
           zxingReader = new ZXing.BrowserMultiFormatReader();
@@ -669,6 +710,46 @@
         console.warn('Barcode validator library loading:', e);
       }
     });
+
+    /**
+     * View Switcher: Mobile <-> Desktop
+     * Preserves entire image, cropper, sliders, and connected hardware state.
+     */
+    function toggleViewMode() {
+      currentViewMode = currentViewMode === 'mobile' ? 'desktop' : 'mobile';
+      applyViewMode(currentViewMode);
+      showToast(`Beralih ke tampilan ${currentViewMode === 'mobile' ? 'Mobile' : 'Desktop'}`, 'info');
+    }
+
+    function applyViewMode(mode) {
+      const container = document.getElementById('mainContainer');
+      const grid = document.getElementById('layoutGrid');
+      const colEditor = document.getElementById('colEditor');
+      const colPreview = document.getElementById('colPreview');
+      const switchIcon = document.getElementById('viewSwitchIcon');
+      const switchText = document.getElementById('viewSwitchText');
+
+      if (mode === 'mobile') {
+        // Mobile Frame Mode
+        container.className = 'mobile-frame-mode flex-1 w-full p-3 sm:p-4 transition-all duration-300';
+        grid.className = 'flex flex-col gap-4';
+        colEditor.className = 'w-full flex flex-col gap-4';
+        colPreview.className = 'w-full flex flex-col gap-4';
+
+        switchIcon.setAttribute('data-lucide', 'smartphone');
+        switchText.innerText = 'Mobile';
+      } else {
+        // Desktop Frame Mode
+        container.className = 'desktop-frame-mode flex-1 w-full p-3 sm:p-5 transition-all duration-300';
+        grid.className = 'grid grid-cols-1 lg:grid-cols-12 gap-5';
+        colEditor.className = 'lg:col-span-7 flex flex-col gap-4';
+        colPreview.className = 'lg:col-span-5 flex flex-col gap-4';
+
+        switchIcon.setAttribute('data-lucide', 'monitor');
+        switchText.innerText = 'Desktop';
+      }
+      lucide.createIcons();
+    }
 
     // Toast Utility
     function showToast(msg, type = 'info') {
@@ -1247,20 +1328,20 @@
         }
 
         if (codeText) {
-          badge.className = 'mb-3 p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-600/50 flex items-center gap-2.5 transition';
-          iconContainer.className = 'p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400';
-          iconContainer.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i>';
-          statusText.className = 'text-xs font-semibold text-emerald-300 truncate';
+          badge.className = 'mb-2.5 p-2 rounded-xl bg-emerald-950/60 border border-emerald-600/50 flex items-center gap-2 transition';
+          iconContainer.className = 'p-1 rounded-lg bg-emerald-500/20 text-emerald-400';
+          iconContainer.innerHTML = '<i data-lucide="check-circle" class="w-3.5 h-3.5"></i>';
+          statusText.className = 'text-[11px] font-semibold text-emerald-300 truncate';
           statusText.innerText = `Barcode Terbaca: ${codeText}`;
-          subText.className = 'text-[10px] text-emerald-400/80 truncate';
+          subText.className = 'text-[9px] text-emerald-400/80 truncate';
           subText.innerText = `Format: ${format} • Hasil cetak dijamin dapat di-scan`;
         } else {
-          badge.className = 'mb-3 p-2.5 rounded-xl bg-amber-950/40 border border-amber-600/40 flex items-center gap-2.5 transition';
-          iconContainer.className = 'p-1.5 rounded-lg bg-amber-500/20 text-amber-400';
-          iconContainer.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4"></i>';
-          statusText.className = 'text-xs font-semibold text-amber-300 truncate';
+          badge.className = 'mb-2.5 p-2 rounded-xl bg-amber-950/40 border border-amber-600/40 flex items-center gap-2 transition';
+          iconContainer.className = 'p-1 rounded-lg bg-amber-500/20 text-amber-400';
+          iconContainer.innerHTML = '<i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>';
+          statusText.className = 'text-[11px] font-semibold text-amber-300 truncate';
           statusText.innerText = 'Barcode belum terverifikasi tajam';
-          subText.className = 'text-[10px] text-amber-400/80 truncate';
+          subText.className = 'text-[9px] text-amber-400/80 truncate';
           subText.innerText = 'Coba gunakan Preset Ultra-Sharp atau Anti-Bleed (-1px)';
         }
         lucide.createIcons();
@@ -1443,7 +1524,6 @@
           await usbDevice.open();
           await usbDevice.selectConfiguration(1);
 
-          // Find printer interface (class 7) or vendor interface
           let printerInterface = null;
           let outEndpoint = null;
 
@@ -1527,7 +1607,7 @@
       } else {
         connectedDeviceType = null;
         indicator.className = 'w-2 h-2 rounded-full bg-slate-500';
-        text.innerText = 'Belum Terhubung';
+        text.innerText = 'Offline';
         text.classList.remove('text-emerald-400');
         text.classList.add('text-slate-400');
         activeModal.classList.add('hidden');
